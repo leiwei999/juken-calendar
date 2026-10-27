@@ -138,6 +138,39 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .dltable th,.dltable td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
 .dltable th{font-size:12px;color:var(--muted);background:var(--bg)}
 .dltable td.n{font-family:var(--f-mono);white-space:nowrap;font-variant-numeric:tabular-nums}
+/* PDF（印刷）用：画面では非表示、印刷時はこれだけを出す */
+#printdoc{display:none}
+@media print{
+  @page{size:A4;margin:12mm 11mm}
+  html,body{background:#fff!important;color:#111!important}
+  body::before,.wrap{display:none!important}
+  #printdoc{display:block!important;color-scheme:light;color:#111;font-family:var(--f-body);font-size:9.5pt;line-height:1.5}
+  #printdoc *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printdoc h1{font-family:var(--f-display);font-size:19pt;margin:0;line-height:1.25}
+  #printdoc h2{font-family:var(--f-display);font-size:12.5pt;margin:14pt 0 5pt;padding-bottom:2pt;border-bottom:1.5pt solid #1f6b52;break-after:avoid}
+  #printdoc h3{font-size:11pt;margin:0 0 3pt;display:flex;align-items:center;gap:5pt}
+  #printdoc .pd-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12pt;border-bottom:2.5pt solid #111;padding-bottom:5pt}
+  #printdoc .pd-sub{color:#555;font-size:8.5pt}
+  #printdoc .pd-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6pt;margin-top:8pt}
+  #printdoc .pd-stats div{border:1px solid #bbb;border-radius:4pt;padding:4pt 7pt;font-size:8pt;color:#555}
+  #printdoc .pd-stats b{display:block;font-size:12pt;color:#111}
+  #printdoc table{width:100%;border-collapse:collapse;font-size:8.5pt}
+  #printdoc th,#printdoc td{border:1px solid #aaa;padding:3pt 5pt;text-align:left;vertical-align:top}
+  #printdoc th{background:#eef1ee;font-weight:700;white-space:nowrap}
+  #printdoc tr{break-inside:avoid}
+  #printdoc td.n{white-space:nowrap;font-variant-numeric:tabular-nums}
+  #printdoc td.nm{min-width:26mm}
+  #printdoc .dot{display:inline-block;width:7pt;height:7pt;border-radius:50%;background:var(--c);flex:none;vertical-align:baseline;margin-right:3pt}
+  #printdoc .pd-sch{border:1px solid #bbb;border-left:4pt solid var(--c);border-radius:3pt;padding:6pt 8pt;margin-bottom:6pt;break-inside:avoid}
+  #printdoc .pd-sch .pd-sub{margin-bottom:3pt}
+  #printdoc .pd-note{background:#fbeadf;color:#7a2e0a;border-radius:3pt;padding:4pt 7pt;margin:5pt 0;font-size:8.5pt}
+  #printdoc .k-dl{color:#9a3d12;font-weight:700}
+  #printdoc .k-ex{color:#1f6b52;font-weight:700}
+  #printdoc .k-res{color:#555;font-weight:700}
+  #printdoc .box{font-size:11pt;line-height:1}
+  #printdoc ul{margin:0;padding-left:14pt}
+  #printdoc .pd-foot{margin-top:12pt;padding-top:5pt;border-top:1px solid #bbb;font-size:8pt;color:#555}
+}
 body.planmode .controls,body.planmode .srcsec,body.planmode header{display:none}
 
 ul.src{margin:0;padding-left:20px;font-size:13px;color:var(--muted)}
@@ -178,21 +211,22 @@ footer{font-size:13px;color:var(--muted)}
   <section class="srcsec" aria-labelledby="t3" style="display:grid;gap:10px">
     <h2 id="t3">出典</h2>
     <ul class="src">
-      <li>東邦大東邦：<a href="https://www.tohojh.toho-u.ac.jp/exam/020502.html">2027年度 生徒募集要項（公式）</a></li>
-      <li>千葉日大一：<a href="https://www.chibanichi.ed.jp/examinee/file/youkou_20260716.pdf">2027年度 生徒募集要項（公式PDF）</a></li>
-      <li>昭和学院秀英：<a href="https://www.showa-shuei.ed.jp/cms/wp-content/themes/showa-shuei/assets/pdf/2027yokojr.pdf">2027年度 生徒募集要項（公式PDF）</a></li>
-      <li>日大二：<a href="https://www.nichidai2.ac.jp/juniorhighschool/exam/">2027年度 入学試験要項（公式）</a></li>
-      <li>明大明治：<a href="https://www.meiji.ac.jp/ko_chu/admission/info_jr.html">中学受験 入試情報（公式）</a></li>
-      <li>法政大学中：<a href="https://school.js88.com/scl_j/31130628?page=9">JS日本の学校（2027年度募集要項）</a></li>
-      <li>中央大附属：<a href="https://school.js88.com/scl_j/34029294?page=9">JS日本の学校（2027年度募集要項）</a></li>
-      <li>品川女子学院：<a href="https://school.js88.com/scl_j/31130167?page=9">JS日本の学校（2027年度募集要項）</a></li>
-      <li>昭和女子大附属昭和：<a href="https://jhs.swu.ac.jp/admission/summary/index.html">2027年度 募集要項（公式）</a></li>
-      <li>明大八王子：<a href="https://school.js88.com/scl_j/31130605?page=9">JS日本の学校（2027年度募集要項）</a></li>
-      <li>立教女学院：<a href="https://school.js88.com/scl_j/31130332?page=9">JS日本の学校（2027年度募集要項）</a></li>
+      <li data-s="toho">東邦大東邦：<a href="https://www.tohojh.toho-u.ac.jp/exam/020502.html">2027年度 生徒募集要項（公式）</a></li>
+      <li data-s="chibanichi">千葉日大一：<a href="https://www.chibanichi.ed.jp/examinee/file/youkou_20260716.pdf">2027年度 生徒募集要項（公式PDF）</a></li>
+      <li data-s="shuei">昭和学院秀英：<a href="https://www.showa-shuei.ed.jp/cms/wp-content/themes/showa-shuei/assets/pdf/2027yokojr.pdf">2027年度 生徒募集要項（公式PDF）</a></li>
+      <li data-s="nichidai2">日大二：<a href="https://www.nichidai2.ac.jp/juniorhighschool/exam/">2027年度 入学試験要項（公式）</a></li>
+      <li data-s="meimei">明大明治：<a href="https://www.meiji.ac.jp/ko_chu/admission/info_jr.html">中学受験 入試情報（公式）</a></li>
+      <li data-s="hosei">法政大学中：<a href="https://school.js88.com/scl_j/31130628?page=9">JS日本の学校（2027年度募集要項）</a></li>
+      <li data-s="chuo">中央大附属：<a href="https://school.js88.com/scl_j/34029294?page=9">JS日本の学校（2027年度募集要項）</a></li>
+      <li data-s="shina">品川女子学院：<a href="https://school.js88.com/scl_j/31130167?page=9">JS日本の学校（2027年度募集要項）</a></li>
+      <li data-s="showa">昭和女子大附属昭和：<a href="https://jhs.swu.ac.jp/admission/summary/index.html">2027年度 募集要項（公式）</a></li>
+      <li data-s="meihachi">明大八王子：<a href="https://school.js88.com/scl_j/31130605?page=9">JS日本の学校（2027年度募集要項）</a></li>
+      <li data-s="rikkyo">立教女学院：<a href="https://school.js88.com/scl_j/31130332?page=9">JS日本の学校（2027年度募集要項）</a></li>
     </ul>
     <footer>推薦入試があるのは東邦大東邦と千葉日大一の2校だけです（どちらも12月、千葉県の学校）。ほかの学校の中学入試には推薦入試がありません（帰国生入試を除く）。「午前・午後」と集合時刻は、各校の2027年度要項で確認しました（品川女子学院は学校サイトに接続できなかったため、受験情報サイトの掲載にもとづきます）。締切の時刻が書かれていないものは、各校の要項で確認してください。立教女学院の配点は2026年度のものです。</footer>
   </section>
 </div>
+<div id="printdoc" aria-hidden="true"></div>
 
 <script>
 const SCHOOLS = [
@@ -447,6 +481,7 @@ function renderPlans(){
         <button class="btn pri" data-act="open" data-id="${p.id}">開く</button>
         <button class="btn" data-act="edit" data-id="${p.id}">編集</button>
         <button class="btn" data-act="dup" data-id="${p.id}">複製</button>
+        <button class="btn" data-act="pdf" data-id="${p.id}">PDF</button>
         <button class="btn danger" data-act="del" data-id="${p.id}">${armedDelete===p.id?"本当に削除する":"削除"}</button>
       </div></article>`;
   }).join("")}</div>`;
@@ -463,6 +498,7 @@ function renderPlanScreen(p){
       <button class="btn" data-act="back">← 戻る</button>
       <h2>${esc(p.name)}</h2>
       <button class="btn" data-act="edit" data-id="${p.id}">編集</button>
+      <button class="btn pri" data-act="pdf" data-id="${p.id}">PDFで保存</button>
       ${standalone?`<a class="btn" href="#plan-${p.id}" target="_blank" rel="noopener">新しいタブで開く</a>`:""}
     </div>
     <div class="stats">
@@ -476,6 +512,75 @@ function renderPlanScreen(p){
       <div class="dltable"><table><thead><tr><th>締切</th><th>学校・回</th><th>出願開始</th><th>試験日</th><th>残り</th></tr></thead><tbody>
       ${dls.map(e=>`<tr><td class="n">${md(e.dl[0])}（${wd(e.dl[0])}）${esc(e.dl[1]||"")}</td><td><i class="dot" style="--c:var(--s-${e.s})"></i> ${esc(S[e.s].n)} ${esc(e.r)}</td><td class="n">${esc(e.open)}</td><td class="n">${md(e.d)}（${wd(e.d)}）</td><td>${countdown(e.dl[0])}</td></tr>`).join("")}
       </tbody></table></div></section>`;
+}
+
+/* ---- PDF出力：印刷用の詳しい資料を作り、印刷ダイアログで「PDFに保存」してもらう ---- */
+const fd = iso => { const x=pd(iso); return `${x.getFullYear()}/${x.getMonth()+1}/${x.getDate()}（${wd(iso)}）`; };
+const left = iso => { const n=daysTo(iso); return n<0?"終了":n===0?"今日":`あと${n}日`; };
+const dotS = k => `<i class="dot" style="--c:var(--s-${k})"></i>`;
+function printDoc(p){
+  const ex=planExams(p), cf=conflicts(ex);
+  const ks=[...new Set(ex.map(e=>e.s))].sort((a,b)=>SORDER[a]-SORDER[b]);
+  const dls=ex.slice().sort((a,b)=>a.dl[0].localeCompare(b.dl[0]));
+  const now=new Date(), stamp=`${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日`;
+  // 締切・試験・発表を1本の行動予定にまとめる
+  const KO={dl:0,ex:1,res:2}, KN={dl:"出願締切",ex:"試験",res:"合格発表"};
+  const ev=[];
+  for(const e of ex){
+    const nm=`${S[e.s].n} ${e.r}`;
+    ev.push({d:e.dl[0], k:"dl", s:e.s, t:`${nm}　出願締切 ${e.dl[1]||"（時刻は要項で確認）"}`});
+    ev.push({d:e.d, k:"ex", s:e.s, t:`${nm}　${e.t}　${e.subj}`});
+    ev.push({d:e.res[0], k:"res", s:e.s, t:`${nm}　合格発表 ${e.res[1]}`});
+  }
+  ev.sort((a,b)=>a.d.localeCompare(b.d)||KO[a.k]-KO[b.k]||SORDER[a.s]-SORDER[b.s]);
+  const notes=[...new Set(ex.map(e=>e.d))].filter(d=>DAY_NOTES[d]).map(d=>`参考 ${fd(d)}：${DAY_NOTES[d]}`);
+  const src=Object.fromEntries([...document.querySelectorAll(".src li[data-s]")].map(li=>{
+    const a=li.querySelector("a"); return [li.dataset.s, a?{t:a.textContent,h:a.href}:null]; }));
+  const first=ex[0], last=ex[ex.length-1], nextDl=dls.find(e=>daysTo(e.dl[0])>=0);
+
+  const html = `
+  <div class="pd-top"><div><div class="pd-sub">2027年度 中学受験プラン</div><h1>${esc(p.name)}</h1></div>
+    <div class="pd-sub" style="text-align:right">出力日 ${stamp}<br>データは2026年10月27日時点の各校2027年度要項</div></div>
+  <div class="pd-stats">
+    <div>受験する試験<b>${ex.length}回</b></div>
+    <div>学校数<b>${ks.length}校</b></div>
+    <div>受験期間<b>${first?`${md(first.d)}〜${md(last.d)}`:"—"}</b></div>
+    <div>次の出願締切<b>${nextDl?`${md(nextDl.dl[0])}（${left(nextDl.dl[0])}）`:"なし"}</b></div>
+  </div>
+  ${cf.length||notes.length?`<div class="pd-note">${[...cf,...notes].map(esc).join("<br>")}</div>`:""}
+
+  <h2>1. 試験日程の一覧</h2>
+  <table><thead><tr><th>試験日</th><th>時間帯</th><th>学校・回</th><th>定員</th><th>試験科目・配点・集合時刻</th><th>合格発表</th></tr></thead><tbody>
+  ${ex.map(e=>`<tr><td class="n"><b>${fd(e.d)}</b></td><td class="n">${e.t}</td><td class="nm">${dotS(e.s)}${esc(S[e.s].n)}<br><b>${esc(e.r)}</b></td><td class="n">${esc(e.cap)}</td><td>${esc(e.subj)}</td><td class="n">${fd(e.res[0])}<br>${esc(e.res[1])}</td></tr>`).join("")}
+  </tbody></table>
+
+  <h2>2. 出願スケジュール</h2>
+  <table><thead><tr><th>済</th><th>出願締切</th><th>残り</th><th>学校・回</th><th>出願開始</th><th>試験日</th></tr></thead><tbody>
+  ${dls.map(e=>`<tr><td class="box">□</td><td class="n"><b>${fd(e.dl[0])}</b> ${esc(e.dl[1]||"")}</td><td class="n">${left(e.dl[0])}</td><td>${dotS(e.s)}${esc(S[e.s].n)} ${esc(e.r)}</td><td class="n">${esc(e.open)}</td><td class="n">${fd(e.d)}</td></tr>`).join("")}
+  </tbody></table>
+
+  <h2>3. 日ごとの行動予定（締切・試験・発表）</h2>
+  <table><thead><tr><th>済</th><th>日付</th><th>種類</th><th>内容</th></tr></thead><tbody>
+  ${ev.map(v=>`<tr><td class="box">□</td><td class="n">${fd(v.d)}</td><td class="n k-${v.k}">${KN[v.k]}</td><td>${dotS(v.s)}${esc(v.t)}</td></tr>`).join("")}
+  </tbody></table>
+
+  <h2>4. 学校ごとの詳細</h2>
+  ${ks.map(k=>{ const s=S[k];
+    return `<div class="pd-sch" style="--c:var(--s-${k})"><h3>${dotS(k)}${esc(s.full)}</h3>
+      <div class="pd-sub">${esc(s.meta)}</div>
+      ${s.note?`<div class="pd-note">${esc(s.note)}</div>`:""}
+      <table><thead><tr><th>回</th><th>試験日</th><th>試験科目・配点・集合時刻</th><th>出願期間</th><th>合格発表</th></tr></thead><tbody>
+      ${ex.filter(e=>e.s===k).map(e=>`<tr><td><b>${esc(e.r)}</b><br>${esc(e.cap)}</td><td class="n">${fd(e.d)}<br>${e.t}</td><td>${esc(e.subj)}</td><td class="n">${esc(e.open)} 〜<br>${fd(e.dl[0])} ${esc(e.dl[1]||"")}</td><td class="n">${fd(e.res[0])}<br>${esc(e.res[1])}</td></tr>`).join("")}
+      </tbody></table>
+      ${src[k]?`<div class="pd-sub" style="margin-top:3pt">出典：${esc(src[k].t)}　${esc(src[k].h)}</div>`:""}</div>`; }).join("")}
+
+  <div class="pd-foot">このプランは「2027 中学受験カレンダー」で作成しました。「出願開始」の日付は、11月・12月なら2026年、1月なら2027年です。入試の日程や科目は変わることがあります。出願の前に、必ず各校の最新の募集要項を確認してください。</div>`;
+  document.getElementById("printdoc").innerHTML = html;
+  const title=document.title;
+  document.title=`受験プラン_${p.name}`;
+  try{ window.print(); flash=""; }
+  catch(e){ flash="このページでは印刷画面を開けませんでした。公開ページ（leiwei999.github.io/juken-calendar）から試してください。"; flashErr=true; }
+  document.title=title;
 }
 
 function render(){
@@ -540,6 +645,7 @@ document.addEventListener("click",ev=>{
   else if(act==="open" && p){ state.open=p.id; state.view="plan"; window.scrollTo(0,0); }
   else if(act==="back"){ state.view="plans"; state.open=null; }
   else if(act==="edit" && p){ state.draft=p.ids.slice(); state.draftName=p.name; state.editing=p.id; state.view="date"; flash=""; window.scrollTo(0,0); }
+  else if(act==="pdf" && p){ printDoc(p); }
   else if(act==="dup" && p){ plans.push({id:"p"+Date.now().toString(36), name:p.name+" のコピー", ids:p.ids.slice(), updated:Date.now()}); savePlans(); }
   else if(act==="del" && p){
     if(armedDelete===p.id){ plans=plans.filter(x=>x.id!==p.id); savePlans(); armedDelete=null; if(state.editing===p.id) state.editing=null; }
