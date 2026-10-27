@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>2027 中学受験カレンダー</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+</head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Shippori+Mincho+B1:wght@600;800&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: 表示切替（日付順／学校別）＋学校フィルター → 本体 → 出典 */
+:root{
+  --bg:#f6f7f4; --surface:#ffffff; --fg:#1d2420; --muted:#5d6862; --line:#d9ded8;
+  --accent:#1f6b52; --accent-soft:#e3f0ea; --warn:#9a3d12; --warn-soft:#fbeadf; --pm:#7a4fb0; --pm-soft:#efe8f8;
+  --s-hosei:#c0392b; --s-toho:#1f6fb2; --s-chuo:#6b3fa0; --s-shina:#c2186b;
+  --s-showa:#b8860b; --s-meimei:#2e7d32; --s-meihachi:#00838f; --s-rikkyo:#5d4037;
+  --s-chibanichi:#d35400; --s-nichidai2:#5f7016; --s-shuei:#3949ab;
+  --f-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141917; --surface:#1c2320; --fg:#e6ebe7; --muted:#9aa69f; --line:#2f3934;
+  --accent:#6fc7a3; --accent-soft:#1f3a2f; --warn:#f0a070; --warn-soft:#3a2418; --pm:#c3a3f0; --pm-soft:#2d2440;
+  --s-hosei:#ef7a6d; --s-toho:#6eb0ec; --s-chuo:#b896e6; --s-shina:#f07cb4;
+  --s-showa:#e3b84a; --s-meimei:#7fcf83; --s-meihachi:#5fd0db; --s-rikkyo:#c8a596;
+  --s-chibanichi:#f39c5a; --s-nichidai2:#b7c95a; --s-shuei:#9aa5f5;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --surface:#1c2320; --fg:#e6ebe7; --muted:#9aa69f; --line:#2f3934;
+  --accent:#6fc7a3; --accent-soft:#1f3a2f; --warn:#f0a070; --warn-soft:#3a2418; --pm:#c3a3f0; --pm-soft:#2d2440;
+  --s-hosei:#ef7a6d; --s-toho:#6eb0ec; --s-chuo:#b896e6; --s-shina:#f07cb4;
+  --s-showa:#e3b84a; --s-meimei:#7fcf83; --s-meihachi:#5fd0db; --s-rikkyo:#c8a596;
+  --s-chibanichi:#f39c5a; --s-nichidai2:#b7c95a; --s-shuei:#9aa5f5;
+  color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.65}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:24px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.3}
+h1{font-size:clamp(26px,5vw,36px);font-weight:800}
+h2{font-size:20px;font-weight:600}
+.lede{color:var(--muted);margin:6px 0 0;max-width:64ch;font-size:14px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--accent);font-weight:700}
+.dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--c);display:inline-block}
+
+/* controls */
+.controls{display:grid;gap:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.tabs{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;width:max-content;max-width:100%}
+.tabs button{font:inherit;font-weight:700;font-size:14px;padding:8px 18px;border:0;background:var(--surface);color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:13px;display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.chip[aria-pressed="false"]{opacity:.45}
+.chip[aria-pressed="false"] .dot{background:transparent;border:1.5px solid var(--c)}
+.opts{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);align-items:center}
+.opts label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* pills */
+.pill{display:inline-block;font-size:11px;font-weight:700;padding:1px 8px;border-radius:999px;white-space:nowrap;line-height:1.6}
+.p-exam{background:var(--accent-soft);color:var(--accent)}
+.p-pm{background:var(--pm-soft);color:var(--pm)}
+.p-dl{background:var(--warn-soft);color:var(--warn)}
+.p-res{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.count{font-family:var(--f-mono);font-size:12px;color:var(--warn);white-space:nowrap}
+.count.past{color:var(--muted)}
+
+/* date view */
+.month{display:grid;gap:4px}
+.month>h2{padding-block:12px 4px}
+.day{display:grid;grid-template-columns:96px 1fr;gap:14px;padding-block:12px;border-top:1px solid var(--line)}
+.day.past{opacity:.5}
+.date{font-family:var(--f-display);font-weight:800;font-size:24px;line-height:1.1}
+.date small{display:block;font-family:var(--f-body);font-size:12px;font-weight:500;color:var(--muted);margin-top:3px}
+.items{display:grid;gap:8px;min-width:0}
+/* 学校ごとのカードを横に並べ、同じ学校の項目はカード内で縦に積む */
+.row{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:10px;align-items:start}
+.sc{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--c);border-radius:6px;padding:10px 12px;display:grid;gap:8px;min-width:0}
+.ln{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:13px;margin-top:2px}
+.ln .dlv{color:var(--warn);font-weight:700;font-variant-numeric:tabular-nums}
+.sc .sch{font-weight:700;display:flex;align-items:center;gap:6px}
+.en{display:grid;gap:2px;padding-top:8px;border-top:1px dashed var(--line)}
+.sc .sch + .en{padding-top:0;border-top:0}
+.en .head{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.en .rn{font-weight:500}
+.sub{font-size:13px;color:var(--muted)}
+.warnline{font-size:13px;color:var(--warn);font-weight:500}
+
+/* school view */
+.schools{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,480px),1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:8px;padding:14px 16px;display:grid;gap:10px;min-width:0}
+.card h3{font-size:19px;display:flex;align-items:center;gap:8px}
+.card .meta{font-size:13px;color:var(--muted)}
+.rounds{display:grid;gap:8px}
+.round{border-top:1px solid var(--line);padding-top:8px;display:grid;gap:4px}
+.round:first-child{border-top:0;padding-top:0}
+.round .rh{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.round .rn{font-weight:700}
+.kv{display:grid;grid-template-columns:4.5em 1fr;gap:2px 10px;font-size:13.5px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-variant-numeric:tabular-nums}
+.kv dd.dlv{color:var(--warn);font-weight:700}
+.card .cn{font-size:13px;color:var(--warn);background:var(--warn-soft);padding:6px 10px;border-radius:4px}
+
+/* plan */
+.pick{font:inherit;font-size:12px;font-weight:700;margin-left:auto;padding:2px 10px;border-radius:999px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;white-space:nowrap}
+.pick[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.en.picked,.round.picked{background:var(--accent-soft);margin-inline:-6px;padding-inline:6px;border-radius:4px}
+.planbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;background:var(--surface);border:1px solid var(--accent);border-radius:8px;padding:8px 12px;font-size:14px}
+.planbar b{color:var(--accent)}
+.planbar input{font:inherit;font-size:14px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);min-width:0;flex:1 1 160px;max-width:260px}
+.btn{font:inherit;font-size:13px;font-weight:700;padding:5px 12px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.btn.danger{color:var(--warn);border-color:var(--warn)}
+.btn:disabled{opacity:.45;cursor:default}
+.msg{font-size:13px;color:var(--accent);font-weight:700}
+.msg.err{color:var(--warn);background:var(--warn-soft);padding:4px 10px;border-radius:6px;flex-basis:100%}
+.pick.blocked{border-color:var(--line);color:var(--muted);cursor:not-allowed}
+.conf{display:grid;gap:4px;font-size:13px;color:var(--warn);background:var(--warn-soft);padding:8px 12px;border-radius:6px}
+.plans{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:10px;min-width:0}
+.pcard h3{font-size:18px}
+.pcard .acts{display:flex;flex-wrap:wrap;gap:6px}
+.mini{display:grid;gap:3px;font-size:13px}
+.mini div{display:flex;gap:8px;align-items:baseline;min-width:0}
+.mini .d{font-family:var(--f-mono);font-size:12px;color:var(--muted);flex:none;width:6.5em}
+.phead{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.phead h2{font-size:26px;font-weight:800}
+.stats{display:flex;flex-wrap:wrap;gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 14px;display:grid;font-size:12px;color:var(--muted)}
+.stat b{font-size:18px;color:var(--fg);font-family:var(--f-display)}
+.dltable{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.dltable table{border-collapse:collapse;width:100%;min-width:520px;font-size:14px}
+.dltable th,.dltable td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+.dltable th{font-size:12px;color:var(--muted);background:var(--bg)}
+.dltable td.n{font-family:var(--f-mono);white-space:nowrap;font-variant-numeric:tabular-nums}
+body.planmode .controls,body.planmode .srcsec,body.planmode header{display:none}
+
+ul.src{margin:0;padding-left:20px;font-size:13px;color:var(--muted)}
+ul.src a{color:var(--accent)}
+footer{font-size:13px;color:var(--muted)}
+.empty{color:var(--muted);font-size:14px;padding:20px 0}
+@media (max-width:640px){
+  .day{grid-template-columns:1fr;gap:6px}
+  .date{font-size:20px}.date small{display:inline;margin-left:8px}
+}
+@media (prefers-reduced-motion:no-preference){.tabs button,.chip{transition:background .15s,opacity .15s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">2027年度入試 ・ 11校 ・ 2026年10月27日時点の調査</div>
+    <h1>2027 中学受験カレンダー</h1>
+    <p class="lede">試験日と出願締切を、日付順と学校別の2通りで見られます。「＋ プラン」で受ける試験を選んで、受験プランとして保存できます。選んだ試験と同じ日・同じ時間帯の試験は選べません。帰国生入試は除いています。出願の前に、必ず各校の公式要項を確認してください。</p>
+  </header>
+
+  <div class="controls">
+    <div class="tabs" role="tablist" aria-label="表示の切り替え">
+      <button role="tab" id="tab-date" aria-selected="true" aria-controls="view">日付順</button>
+      <button role="tab" id="tab-school" aria-selected="false" aria-controls="view">学校別</button>
+      <button role="tab" id="tab-plans" aria-selected="false" aria-controls="view">マイプラン</button>
+    </div>
+    <div class="chips" id="chips" aria-label="表示する学校"></div>
+    <div class="opts">
+      <label><input type="checkbox" id="opt-dl" checked> 出願締切を表示</label>
+      <label><input type="checkbox" id="opt-res"> 合格発表を表示</label>
+      <label><input type="checkbox" id="opt-past" checked> 過ぎた日も表示</label>
+    </div>
+    <div class="planbar" id="planbar"></div>
+  </div>
+
+  <main id="view" role="tabpanel" aria-live="polite"></main>
+
+  <section class="srcsec" aria-labelledby="t3" style="display:grid;gap:10px">
+    <h2 id="t3">出典</h2>
+    <ul class="src">
+      <li>東邦大東邦：<a href="https://www.tohojh.toho-u.ac.jp/exam/020502.html">2027年度 生徒募集要項（公式）</a></li>
+      <li>千葉日大一：<a href="https://www.chibanichi.ed.jp/examinee/file/youkou_20260716.pdf">2027年度 生徒募集要項（公式PDF）</a></li>
+      <li>昭和学院秀英：<a href="https://www.showa-shuei.ed.jp/cms/wp-content/themes/showa-shuei/assets/pdf/2027yokojr.pdf">2027年度 生徒募集要項（公式PDF）</a></li>
+      <li>日大二：<a href="https://www.nichidai2.ac.jp/juniorhighschool/exam/">2027年度 入学試験要項（公式）</a></li>
+      <li>明大明治：<a href="https://www.meiji.ac.jp/ko_chu/admission/info_jr.html">中学受験 入試情報（公式）</a></li>
+      <li>法政大学中：<a href="https://school.js88.com/scl_j/31130628?page=9">JS日本の学校（2027年度募集要項）</a></li>
+      <li>中央大附属：<a href="https://school.js88.com/scl_j/34029294?page=9">JS日本の学校（2027年度募集要項）</a></li>
+      <li>品川女子学院：<a href="https://school.js88.com/scl_j/31130167?page=9">JS日本の学校（2027年度募集要項）</a></li>
+      <li>昭和女子大附属昭和：<a href="https://jhs.swu.ac.jp/admission/summary/index.html">2027年度 募集要項（公式）</a></li>
+      <li>明大八王子：<a href="https://school.js88.com/scl_j/31130605?page=9">JS日本の学校（2027年度募集要項）</a></li>
+      <li>立教女学院：<a href="https://school.js88.com/scl_j/31130332?page=9">JS日本の学校（2027年度募集要項）</a></li>
+    </ul>
+    <footer>推薦入試があるのは東邦大東邦と千葉日大一の2校だけです（どちらも12月、千葉県の学校）。ほかの学校の中学入試には推薦入試がありません（帰国生入試を除く）。「午前・午後」と集合時刻は、各校の2027年度要項で確認しました（品川女子学院は学校サイトに接続できなかったため、受験情報サイトの掲載にもとづきます）。締切の時刻が書かれていないものは、各校の要項で確認してください。立教女学院の配点は2026年度のものです。</footer>
+  </section>
+</div>
+
+<script>
+const SCHOOLS = [
+  {k:"toho", n:"東邦大東邦", full:"東邦大学付属東邦中学校", meta:"千葉・習志野 ／ 共学 ／ 受験料 26,000円",
+   note:"推薦は専願（合格したら必ず入学）。自己推薦書の郵送が必要です。"},
+  {k:"chibanichi", n:"千葉日大一", full:"千葉日本大学第一中学校", meta:"千葉・船橋 ／ 共学 ／ 受験料 20,000円",
+   note:"自己推薦は専願（合格したら必ず入学）。志願書の郵送が必要です。英検4級で3点、3級以上で5点の加点があります。"},
+  {k:"shuei", n:"昭和秀英", full:"昭和学院秀英中学校", meta:"千葉・幕張 ／ 共学 ／ 受験料 26,000円 ／ ネット出願のみ",
+   note:"推薦入試はありません。成績優秀者は特待生として合格します（入学時納入金と1年間の授業料相当を給付）。"},
+  {k:"nichidai2", n:"日大二", full:"日本大学第二中学校", meta:"東京・杉並 ／ 共学 ／ 受験料 30,000円（2回同時出願は40,000円）",
+   note:"第1回と第2回を同時に出願して第1回で合格した場合、第2回は受験できません。"},
+  {k:"hosei", n:"法政大学中", full:"法政大学中学校", meta:"東京・三鷹 ／ 共学 ／ 受験料 25,000円 ／ ネット出願のみ"},
+  {k:"chuo", n:"中央大附属", full:"中央大学附属中学校", meta:"東京・小金井 ／ 共学"},
+  {k:"shina", n:"品川女子学院", full:"品川女子学院中等部", meta:"東京・品川 ／ 女子"},
+  {k:"showa", n:"昭和女子", full:"昭和女子大学附属昭和中学校", meta:"東京・三軒茶屋 ／ 女子 ／ 受験料 25,000円（1回の支払いで全回受験可）",
+   note:"グローバルコース（GA・GB）は英検3級以上を持っていることが出願条件です。英検がない場合は本科コースで受験してください。"},
+  {k:"meimei", n:"明大明治", full:"明治大学付属明治中学校", meta:"東京・調布 ／ 共学"},
+  {k:"meihachi", n:"明大八王子", full:"明治大学付属八王子中学校", meta:"東京・八王子 ／ 共学 ／ 受験料 A方式30,000円・B方式20,000円"},
+  {k:"rikkyo", n:"立教女学院", full:"立教女学院中学校", meta:"東京・杉並 ／ 女子",
+   note:"入試は2/1の1回だけです。"},
+];
+// d=試験日, t=時間帯, dl=出願締切 [日付, 時刻], open=出願開始, res=合格発表 [日付, 時刻]
+const EXAMS = [
+  {s:"toho", r:"推薦（専願）", d:"2026-12-01", t:"午前", cap:"40名", subj:"学力試験4科：国語・算数（各100点/45分）、社会・理科（各50点/30分）＋ 自己推薦書（出願時に郵送）。面接なし。8:20点呼",
+   open:"11/2", dl:["2026-11-16","消印有効"], res:["2026-12-02","10:00"]},
+  {s:"toho", r:"前期", d:"2027-01-21", t:"午前", cap:"240名", subj:"国・算・社・理（各100点/45分）　8:20点呼",
+   open:"12/3", dl:["2027-01-08","13:00"], res:["2027-01-23","10:00"]},
+  {s:"toho", r:"後期", d:"2027-02-03", t:"午前", cap:"20名", subj:"国・算（各100点/45分）、社・理（各50点/30分）　8:20点呼",
+   open:"1/23", dl:["2027-02-02","12:00"], res:["2027-02-04","10:00"]},
+
+  {s:"chibanichi", r:"自己推薦（専願）", d:"2026-12-01", t:"午前", cap:"70名", subj:"学力試験4科：国語・算数（各100点/50分）、社会・理科（各80点/40分）＋ 入学志願書（志望理由を本人が記入して郵送）。面接なし。英検4級+3点・3級以上+5点。8:30集合",
+   open:"11/11", dl:["2026-11-27","18:00（書類は郵送で必着）"], res:["2026-12-02","10:00"]},
+  {s:"chibanichi", r:"第1期", d:"2027-01-21", t:"午前", cap:"140名", subj:"国・算（各100点/50分）、社・理（各80点/40分）　8:30集合",
+   open:"12/4", dl:["2027-01-19","18:00"], res:["2027-01-22","15:00"]},
+  {s:"chibanichi", r:"第2期", d:"2027-01-26", t:"午前", cap:"30名", subj:"国・算（各100点/50分）　8:30集合",
+   open:"12/19", dl:["2027-01-25","12:00"], res:["2027-01-27","10:00"]},
+
+  {s:"shuei", r:"午後特別", d:"2027-01-20", t:"午後", cap:"30名", subj:"国語（60点/40分）・算数（120点/60分）　14:30集合",
+   open:"12/16", dl:["2027-01-15","14:00"], res:["2027-01-21","12:00"]},
+  {s:"shuei", r:"第1回", d:"2027-01-22", t:"午前", cap:"110名", subj:"国・算（各100点/50分）、社・理（各50点/40分）　8:20集合",
+   open:"12/16", dl:["2027-01-15","14:00"], res:["2027-01-24","10:00"]},
+  {s:"shuei", r:"第2回", d:"2027-02-03", t:"午前", cap:"20名", subj:"国・算（各100点/50分）、社・理（各50点/40分）　8:20集合",
+   open:"1/25", dl:["2027-02-02","23:59"], res:["2027-02-03","19:00"]},
+
+  {s:"nichidai2", r:"第1回", d:"2027-02-01", t:"午前", cap:"男女各74名", subj:"2科（国・算 各100点）または4科（＋社・理 各50点）　8:20集合",
+   open:"1/10", dl:["2027-01-31","12:00"], res:["2027-02-01","20:00頃"]},
+  {s:"nichidai2", r:"第2回", d:"2027-02-03", t:"午前", cap:"男女各40名", subj:"2科または4科（第1回と同じ）　8:20集合",
+   open:"1/10", dl:["2027-02-02","17:00"], res:["2027-02-03","20:00頃"]},
+
+  {s:"hosei", r:"第1回", d:"2027-02-01", t:"午前", cap:"約50名", subj:"国・算（各150点/50分）、社・理（各100点/35分）　8:20集合",
+   open:"1/10", dl:["2027-01-24","23:59"], res:["2027-02-01","ネット"]},
+  {s:"hosei", r:"第2回", d:"2027-02-03", t:"午前", cap:"約50名", subj:"4科（第1回と同じ）　8:20集合",
+   open:"1/10", dl:["2027-02-02","12:00"], res:["2027-02-03","ネット"]},
+  {s:"hosei", r:"第3回", d:"2027-02-05", t:"午前", cap:"約40名", subj:"4科（第1回と同じ）　8:20集合",
+   open:"1/10", dl:["2027-02-04","12:00"], res:["2027-02-05","ネット"]},
+
+  {s:"chuo", r:"第1回", d:"2027-02-01", t:"午前", cap:"約100名", subj:"国・算（各100点/50分）、社・理（各60点/30分）　8:30着席",
+   open:"1/10", dl:["2027-01-24","14:00"], res:["2027-02-02","6:00"]},
+  {s:"chuo", r:"第2回", d:"2027-02-04", t:"午前", cap:"約50名", subj:"4科（第1回と同じ）　8:30着席",
+   open:"1/10", dl:["2027-02-03","14:00"], res:["2027-02-05","6:00"]},
+
+  {s:"shina", r:"第1回", d:"2027-02-01", t:"午前", cap:"90名", subj:"国・算・社・理",
+   open:"1/10", dl:["2027-01-31","8:00"], res:["2027-02-01","21:00"]},
+  {s:"shina", r:"算数1教科", d:"2027-02-01", t:"午後", cap:"20名", subj:"算数のみ",
+   open:"1/10", dl:["2027-01-31","8:00"], res:["2027-02-01","22:00"]},
+  {s:"shina", r:"第2回", d:"2027-02-02", t:"午前", cap:"60名", subj:"国・算・社・理",
+   open:"1/10", dl:["2027-02-01","23:00"], res:["2027-02-02","21:00"]},
+  {s:"shina", r:"表現力・総合型", d:"2027-02-04", t:"午前", cap:"30名", subj:"試験Ⅰ 読解・論述（40点/50分）＋試験Ⅱ 4科目総合（120点/70分）",
+   open:"1/10", dl:["2027-02-03","23:00"], res:["2027-02-04","21:00"]},
+
+  {s:"showa", r:"本科AA ／ グローバルGA", d:"2027-02-01", t:"午前", cap:"AA 40名・GA/GB計25名", subj:"2科（国・算）、4科（国・算・社理）、英語資格入試（国・算＋英検のみなし得点）から選択。グローバルは英検3級以上が必要　8:30集合",
+   open:"1/10", dl:["2027-01-30","23:30"], res:["2027-02-01","当日"]},
+  {s:"showa", r:"本科AP", d:"2027-02-01", t:"午後", cap:"30名", subj:"2科（国・算）または英語資格入試　15:00集合",
+   open:"1/10", dl:["2027-01-30","23:30"], res:["2027-02-01","当日"]},
+  {s:"showa", r:"本科B ／ グローバルGB", d:"2027-02-02", t:"午前", cap:"B 30名", subj:"2科・4科・英語資格入試から選択（AA/GAと同じ）。グローバルは英検3級以上が必要　8:30集合",
+   open:"1/10", dl:["2027-02-01","23:30"], res:["2027-02-02","当日"]},
+  {s:"showa", r:"スーパーサイエンスSB", d:"2027-02-02", t:"午前", cap:"SB/SC計20名", subj:"3科（国・算・理 各100点/50分）　8:30集合",
+   open:"1/10", dl:["2027-02-01","23:30"], res:["2027-02-02","19:00"]},
+  {s:"showa", r:"本科C ／ サイエンスSC", d:"2027-02-04", t:"午後", cap:"C 20名", subj:"2科（国・算）または英語資格入試　15:00集合",
+   open:"1/10", dl:["2027-02-03","23:30"], res:["2027-02-04","22:00頃（SC）"]},
+
+  {s:"meimei", r:"第1回", d:"2027-02-02", t:"午前", cap:"男女各約45名", subj:"国・算（各100点/50分）、理・社（各75点/40分）　8:15集合",
+   open:"1/10", dl:["2027-01-25","15:00"], res:["2027-02-02","22:00頃"]},
+  {s:"meimei", r:"第2回", d:"2027-02-03", t:"午前", cap:"男女各約30名", subj:"4科（第1回と同じ）　8:15集合",
+   open:"1/10", dl:["2027-01-25","15:00"], res:["2027-02-03","22:00頃"]},
+
+  {s:"meihachi", r:"A方式 第1回", d:"2027-02-01", t:"午前", cap:"100名", subj:"国・算（各100点/50分）、社・理（各50点/30分）　8:45入室",
+   open:"1/10", dl:["2027-01-31","12:00"], res:["2027-02-01","18:00"]},
+  {s:"meihachi", r:"A方式 第2回", d:"2027-02-03", t:"午前", cap:"40名", subj:"4科（第1回と同じ）　8:45入室",
+   open:"1/10", dl:["2027-02-02","12:00"], res:["2027-02-03","18:00"]},
+  {s:"meihachi", r:"B方式", d:"2027-02-05", t:"午前", cap:"20名", subj:"4科総合問題（120点/60分）　8:45入室",
+   open:"1/10", dl:["2027-02-04","12:00"], res:["2027-02-05","16:00"]},
+
+  {s:"rikkyo", r:"一般（1回のみ）", d:"2027-02-01", t:"午前", cap:"約120名", subj:"国・算（各90点）、社・理（各60点）",
+   open:"1/10", dl:["2027-01-25",""], res:["2027-02-01","21:00"]},
+];
+const DAY_NOTES = {
+  "2026-12-01":"東邦大東邦の推薦と千葉日大一の自己推薦は同じ日です。どちらも専願なので、受けられるのは1つだけです。",
+  "2027-01-21":"東邦大東邦の前期と千葉日大一の第1期は同じ日です。どちらか1つを選んでください。千葉日大一は1/26の第2期も受けられます。",
+  "2027-02-01":"午前に受けられるのは1校だけです。立教女学院は2/1にしか入試がありません。午後は品川の算数1教科か昭和APを組み合わせられます。",
+};
+const WD = ["日","月","火","水","木","金","土"];
+const S = Object.fromEntries(SCHOOLS.map(s=>[s.k,s]));
+EXAMS.forEach(e=>{ e.id = e.s+"|"+e.r; });
+const BY_ID = Object.fromEntries(EXAMS.map(e=>[e.id,e]));
+const SORDER = Object.fromEntries(SCHOOLS.map((s,i)=>[s.k,i]));
+const TORDER = {"午前":0,"":1,"午後":2};
+const pd = iso => { const [y,m,d]=iso.split("-").map(Number); return new Date(y,m-1,d); };
+const md = iso => { const x=pd(iso); return `${x.getMonth()+1}/${x.getDate()}`; };
+const wd = iso => WD[pd(iso).getDay()];
+const today = (()=>{ const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); })();
+const daysTo = iso => Math.round((pd(iso)-today)/864e5);
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const byExam = (a,b) => a.d.localeCompare(b.d) || TORDER[a.t]-TORDER[b.t] || SORDER[a.s]-SORDER[b.s];
+function countdown(iso){
+  const n=daysTo(iso);
+  if(n<0) return `<span class="count past">終了</span>`;
+  if(n===0) return `<span class="count">今日</span>`;
+  return `<span class="count">あと${n}日</span>`;
+}
+
+/* ---- 保存（この端末のブラウザ内のみ） ---- */
+let state = {view:"date", off:[], dl:true, res:false, past:true, draft:[], draftName:"", editing:null, open:null};
+try{ const v=JSON.parse(localStorage.getItem("juken27")||"null"); if(v) state={...state,...v}; }catch(e){}
+let plans = [];
+try{ plans = JSON.parse(localStorage.getItem("juken27-plans")||"[]") || []; }catch(e){ plans=[]; }
+let flash = "", flashErr = false, armedDelete = null;
+const save = () => { try{ localStorage.setItem("juken27",JSON.stringify(state)); }catch(e){} };
+const savePlans = () => { try{ localStorage.setItem("juken27-plans",JSON.stringify(plans)); return true; }catch(e){ return false; } };
+const on = k => !state.off.includes(k);
+const picked = id => state.draft.includes(id);
+// 作成中のプランの中で、同じ日・同じ時間帯（午前/午後）の試験、または2つ目の専願を返す
+function clashWith(id){
+  const e=BY_ID[id];
+  for(const x of state.draft.map(i=>BY_ID[i]).filter(Boolean)){
+    if(x.id===id) continue;
+    if(x.d===e.d && x.t===e.t) return x;
+    if(/専願/.test(x.r) && /専願/.test(e.r)) return x;
+  }
+  return null;
+}
+const pickBtn = id => {
+  if(picked(id)) return `<button class="pick" data-pick="${esc(id)}" aria-pressed="true">✓ 選択中</button>`;
+  const c=clashWith(id);
+  if(c) return `<button class="pick blocked" data-pick="${esc(id)}" aria-pressed="false" aria-disabled="true" title="${esc(S[c.s].n+" "+c.r)}と重なります">× 重なり</button>`;
+  return `<button class="pick" data-pick="${esc(id)}" aria-pressed="false">＋ プラン</button>`;
+};
+const planExams = p => p.ids.map(id=>BY_ID[id]).filter(Boolean).sort(byExam);
+
+// 同じ日に2つ以上：午前と午後に分かれていればOK、それ以外は重複の可能性
+function conflicts(exams){
+  const out=[], byDay=new Map();
+  for(const e of exams){ if(!byDay.has(e.d)) byDay.set(e.d,[]); byDay.get(e.d).push(e); }
+  for(const [d,xs] of byDay){
+    if(xs.length<2) continue;
+    const names=xs.map(e=>`${S[e.s].n} ${e.r}${e.t?`（${e.t}）`:""}`).join("、");
+    const am=xs.filter(e=>e.t==="午前").length, pm=xs.filter(e=>e.t==="午後").length, unk=xs.length-am-pm;
+    if(am>1 || pm>1) out.push(`${md(d)}（${wd(d)}）同じ時間帯に重なっています：${names}`);
+    else if(unk>0) out.push(`${md(d)}（${wd(d)}）時間を要項で確認してください：${names}`);
+  }
+  const sengan=exams.filter(e=>/専願/.test(e.r));
+  if(sengan.length>1) out.push(`専願の入試が${sengan.length}つあります。合格したら必ず入学する入試なので、1つだけにしてください。`);
+  return out;
+}
+
+function renderChips(){
+  document.getElementById("chips").innerHTML = SCHOOLS.map(s =>
+    `<button class="chip" data-k="${s.k}" aria-pressed="${on(s.k)}" style="--c:var(--s-${s.k})"><i class="dot"></i>${esc(s.n)}</button>`).join("");
+}
+
+/* ---- 日付順のタイムライン（カレンダーとプラン画面で共用） ---- */
+function timeline(exams, opts){
+  const list=exams.slice().sort(byExam).filter(e=>opts.past || daysTo(e.d)>=0);
+  if(!list.length) return `<p class="empty">${opts.empty}</p>`;
+  const byDay=new Map();
+  for(const e of list){ if(!byDay.has(e.d)) byDay.set(e.d,[]); byDay.get(e.d).push(e); }
+  let html="", curMonth="";
+  for(const [d,xs] of byDay){
+    const x=pd(d), mk=`${x.getFullYear()}年${x.getMonth()+1}月`;
+    if(mk!==curMonth){ if(curMonth) html+=`</div>`; html+=`<div class="month"><h2>${mk}</h2>`; curMonth=mk; }
+    // 学校ごとにカードを作り、同じ学校の回は午前→午後の順に縦に並べる
+    const bySchool=new Map();
+    for(const e of xs){ if(!bySchool.has(e.s)) bySchool.set(e.s,[]); bySchool.get(e.s).push(e); }
+    const cards=[...bySchool].map(([k,es])=>{
+      const ens=es.map(e=>{
+        const tp=e.t==="午後"?`<span class="pill p-pm">午後</span>`:e.t?`<span class="pill p-exam">${e.t}</span>`:`<span class="pill p-exam">試験</span>`;
+        const dl=state.dl?`<div class="ln"><span class="pill p-dl">締切</span><span class="dlv">${md(e.dl[0])}（${wd(e.dl[0])}）${esc(e.dl[1]||"")}</span>${countdown(e.dl[0])}</div>`:"";
+        const rs=(state.res||opts.plan)?`<div class="ln"><span class="pill p-res">発表</span><span class="sub">${md(e.res[0])}（${wd(e.res[0])}）${esc(e.res[1])}</span></div>`:"";
+        return `<div class="en${opts.pick&&picked(e.id)?" picked":""}"><div class="head">${tp}<span class="rn">${esc(e.r)}</span><span class="sub">${esc(e.cap)}</span>${opts.pick?pickBtn(e.id):""}</div>
+          <div class="sub">${esc(e.subj)}</div>${dl}${rs}</div>`;
+      }).join("");
+      return `<div class="sc" style="--c:var(--s-${k})"><div class="sch"><i class="dot"></i>${esc(S[k].n)}</div>${ens}</div>`;
+    }).join("");
+    const note = opts.plan ? "" : (DAY_NOTES[d] ? `<div class="warnline">${DAY_NOTES[d]}</div>` : "");
+    html+=`<div class="day${daysTo(d)<0?" past":""}"><div class="date">${md(d)}<small>${wd(d)}曜</small></div><div class="items"><div class="row">${cards}</div>${note}</div></div>`;
+  }
+  return html+`</div>`;
+}
+
+function renderDate(){
+  return timeline(EXAMS.filter(e=>on(e.s)), {pick:true, past:state.past, empty:"表示する予定がありません。学校の選択を確認してください。"});
+}
+
+function renderSchool(){
+  const cards=SCHOOLS.filter(s=>on(s.k)).map(s=>{
+    const rounds=EXAMS.filter(e=>e.s===s.k).map(e=>{
+      const tp=e.t==="午後"?`<span class="pill p-pm">午後</span>`:e.t?`<span class="pill p-exam">${e.t}</span>`:"";
+      return `<div class="round${picked(e.id)?" picked":""}"><div class="rh"><span class="rn">${esc(e.r)}</span>${tp}<span class="sub">${esc(e.cap)}</span>${pickBtn(e.id)}</div>
+        <dl class="kv">
+          <dt>試験日</dt><dd><b>${md(e.d)}（${wd(e.d)}）</b></dd>
+          <dt>科目</dt><dd>${esc(e.subj)}</dd>
+          <dt>出願</dt><dd class="dlv">${esc(e.open)} 〜 ${md(e.dl[0])}（${wd(e.dl[0])}）${esc(e.dl[1])} ${countdown(e.dl[0])}</dd>
+          <dt>発表</dt><dd>${md(e.res[0])}（${wd(e.res[0])}）${esc(e.res[1])}</dd>
+        </dl></div>`;
+    }).join("");
+    return `<article class="card" style="--c:var(--s-${s.k})">
+      <div><h3><i class="dot"></i>${esc(s.full)}</h3><div class="meta">${esc(s.meta)}</div></div>
+      ${s.note?`<div class="cn">${esc(s.note)}</div>`:""}
+      <div class="rounds">${rounds}</div></article>`;
+  }).join("");
+  return cards?`<div class="schools">${cards}</div>`:`<p class="empty">学校が選ばれていません。上のボタンで学校を選んでください。</p>`;
+}
+
+/* ---- 作成中プランのバー ---- */
+function renderPlanBar(){
+  const bar=document.getElementById("planbar");
+  const n=state.draft.length;
+  const editing=plans.find(p=>p.id===state.editing);
+  const cf=conflicts(state.draft.map(id=>BY_ID[id]).filter(Boolean));
+  bar.innerHTML = `
+    <span>${editing?`「${esc(editing.name)}」を編集中：`:"作成中のプラン："}<b>${n}件</b>選択</span>
+    ${cf.length?`<span class="count">重なり ${cf.length}件</span>`:""}
+    <input id="plan-name" type="text" maxlength="30" placeholder="プラン名（例：第一志望ルート）" value="${esc(state.draftName)}" aria-label="プラン名">
+    <button class="btn pri" data-act="save" ${n?"":"disabled"}>${editing?"上書き保存":"保存"}</button>
+    ${editing?`<button class="btn" data-act="saveas" ${n?"":"disabled"}>別のプランとして保存</button>`:""}
+    <button class="btn" data-act="clear" ${n||editing?"":"disabled"}>${editing?"編集をやめる":"選択をクリア"}</button>
+    ${flash?`<span class="msg${flashErr?" err":""}" role="status">${esc(flash)}</span>`:""}`;
+}
+
+/* ---- マイプラン一覧 ---- */
+function renderPlans(){
+  if(!plans.length) return `<div class="pcard"><h3>保存したプランはまだありません</h3>
+    <p class="sub" style="margin:0">「日付順」か「学校別」で受けたい試験の「＋ プラン」を押し、上のバーで名前を付けて保存してください。保存したプランは、このブラウザの中に残ります。</p></div>`;
+  return `<div class="plans">${plans.map(p=>{
+    const ex=planExams(p), cf=conflicts(ex);
+    const next=ex.map(e=>e.dl[0]).filter(d=>daysTo(d)>=0).sort()[0];
+    return `<article class="pcard">
+      <div><h3>${esc(p.name)}</h3><div class="sub">試験 ${ex.length}回 ・ ${next?`次の締切 ${md(next)}（${wd(next)}）あと${daysTo(next)}日`:"締切はすべて終了"}</div></div>
+      <div class="mini">${ex.map(e=>`<div><span class="d">${md(e.d)}（${wd(e.d)}）${e.t}</span><span><i class="dot" style="--c:var(--s-${e.s})"></i> ${esc(S[e.s].n)} ${esc(e.r)}</span></div>`).join("")}</div>
+      ${cf.length?`<div class="conf">${cf.map(esc).join("<br>")}</div>`:""}
+      <div class="acts">
+        <button class="btn pri" data-act="open" data-id="${p.id}">開く</button>
+        <button class="btn" data-act="edit" data-id="${p.id}">編集</button>
+        <button class="btn" data-act="dup" data-id="${p.id}">複製</button>
+        <button class="btn danger" data-act="del" data-id="${p.id}">${armedDelete===p.id?"本当に削除する":"削除"}</button>
+      </div></article>`;
+  }).join("")}</div>`;
+}
+
+/* ---- プラン画面（1つのプランだけを表示） ---- */
+function renderPlanScreen(p){
+  const ex=planExams(p), cf=conflicts(ex);
+  const dls=ex.slice().sort((a,b)=>a.dl[0].localeCompare(b.dl[0]));
+  const next=dls.find(e=>daysTo(e.dl[0])>=0);
+  let standalone=false; try{ standalone = window.top===window.self; }catch(e){}
+  return `
+    <div class="phead">
+      <button class="btn" data-act="back">← 戻る</button>
+      <h2>${esc(p.name)}</h2>
+      <button class="btn" data-act="edit" data-id="${p.id}">編集</button>
+      ${standalone?`<a class="btn" href="#plan-${p.id}" target="_blank" rel="noopener">新しいタブで開く</a>`:""}
+    </div>
+    <div class="stats">
+      <div class="stat">試験<b>${ex.length}回</b></div>
+      <div class="stat">最初の試験<b>${ex[0]?`${md(ex[0].d)}（${wd(ex[0].d)}）`:"—"}</b></div>
+      <div class="stat">次の出願締切<b>${next?`${md(next.dl[0])} あと${daysTo(next.dl[0])}日`:"なし"}</b></div>
+    </div>
+    ${cf.length?`<div class="conf">${cf.map(esc).join("<br>")}</div>`:""}
+    <section style="display:grid;gap:10px"><h2>試験日程</h2>${timeline(ex,{plan:true,past:true,empty:"このプランには試験がありません。"})}</section>
+    <section style="display:grid;gap:10px"><h2>出願締切の一覧</h2>
+      <div class="dltable"><table><thead><tr><th>締切</th><th>学校・回</th><th>出願開始</th><th>試験日</th><th>残り</th></tr></thead><tbody>
+      ${dls.map(e=>`<tr><td class="n">${md(e.dl[0])}（${wd(e.dl[0])}）${esc(e.dl[1]||"")}</td><td><i class="dot" style="--c:var(--s-${e.s})"></i> ${esc(S[e.s].n)} ${esc(e.r)}</td><td class="n">${esc(e.open)}</td><td class="n">${md(e.d)}（${wd(e.d)}）</td><td>${countdown(e.dl[0])}</td></tr>`).join("")}
+      </tbody></table></div></section>`;
+}
+
+function render(){
+  const openPlan = state.view==="plan" ? plans.find(p=>p.id===state.open) : null;
+  if(state.view==="plan" && !openPlan) state.view="plans";
+  document.body.classList.toggle("planmode", !!openPlan);
+  for(const v of ["date","school","plans"]) document.getElementById("tab-"+v).setAttribute("aria-selected",state.view===v);
+  document.getElementById("opt-dl").checked=state.dl;
+  document.getElementById("opt-res").checked=state.res;
+  document.getElementById("opt-past").checked=state.past;
+  const pickView = state.view==="date"||state.view==="school";
+  document.querySelector(".opts").hidden = state.view!=="date";
+  document.getElementById("chips").hidden = !pickView;
+  renderChips(); renderPlanBar();
+  const v=document.getElementById("view");
+  v.innerHTML = openPlan ? renderPlanScreen(openPlan)
+    : state.view==="date" ? renderDate() : state.view==="school" ? renderSchool() : renderPlans();
+}
+
+function storeDraft(asNew){
+  const name=(state.draftName||"").trim() || `プラン${plans.length+1}`;
+  const ids=state.draft.slice();
+  let p = !asNew && plans.find(x=>x.id===state.editing);
+  if(p){ p.name=name; p.ids=ids; p.updated=Date.now(); }
+  else { p={id:"p"+Date.now().toString(36), name, ids, updated:Date.now()}; plans.push(p); }
+  flash = savePlans() ? `「${name}」を保存しました` : "保存できませんでした（ブラウザの保存が無効です）";
+  state.draft=[]; state.draftName=""; state.editing=null;
+}
+
+document.getElementById("tab-date").onclick=()=>{state.view="date";save();render();};
+document.getElementById("tab-school").onclick=()=>{state.view="school";save();render();};
+document.getElementById("tab-plans").onclick=()=>{state.view="plans";save();render();};
+document.getElementById("chips").onclick=ev=>{
+  const b=ev.target.closest(".chip"); if(!b) return;
+  const k=b.dataset.k; state.off = on(k)? [...state.off,k] : state.off.filter(x=>x!==k); save(); render();
+};
+for(const [id,key] of [["opt-dl","dl"],["opt-res","res"],["opt-past","past"]])
+  document.getElementById(id).onchange=e=>{state[key]=e.target.checked;save();render();};
+document.getElementById("planbar").addEventListener("input",e=>{ if(e.target.id==="plan-name"){ state.draftName=e.target.value; save(); } });
+document.addEventListener("keydown",e=>{ if(e.target.id==="plan-name" && e.key==="Enter" && state.draft.length){ storeDraft(false); save(); render(); } });
+document.addEventListener("click",ev=>{
+  const pk=ev.target.closest("[data-pick]");
+  if(pk){
+    const id=pk.dataset.pick, e=BY_ID[id];
+    if(picked(id)){ state.draft=state.draft.filter(x=>x!==id); flash=""; flashErr=false; }
+    else {
+      const c=clashWith(id);
+      if(c){
+        flash = c.d===e.d
+          ? `選べません：「${S[e.s].n} ${e.r}」は、選択中の「${S[c.s].n} ${c.r}」と同じ ${md(e.d)}（${wd(e.d)}）${e.t} の試験です。`
+          : `選べません：専願の入試はプランに1つだけです（選択中：「${S[c.s].n} ${c.r}」）。`;
+        flashErr=true;
+      } else { state.draft=[...state.draft,id]; flash=""; flashErr=false; }
+    }
+    save(); render(); return;
+  }
+  const b=ev.target.closest("[data-act]"); if(!b) return;
+  const act=b.dataset.act, p=plans.find(x=>x.id===b.dataset.id);
+  if(act!=="del") armedDelete=null;
+  if(act==="save"||act==="saveas"){ storeDraft(act==="saveas"); state.view="plans"; }
+  else if(act==="clear"){ state.draft=[]; state.draftName=""; state.editing=null; flash=""; }
+  else if(act==="open" && p){ state.open=p.id; state.view="plan"; window.scrollTo(0,0); }
+  else if(act==="back"){ state.view="plans"; state.open=null; }
+  else if(act==="edit" && p){ state.draft=p.ids.slice(); state.draftName=p.name; state.editing=p.id; state.view="date"; flash=""; window.scrollTo(0,0); }
+  else if(act==="dup" && p){ plans.push({id:"p"+Date.now().toString(36), name:p.name+" のコピー", ids:p.ids.slice(), updated:Date.now()}); savePlans(); }
+  else if(act==="del" && p){
+    if(armedDelete===p.id){ plans=plans.filter(x=>x.id!==p.id); savePlans(); armedDelete=null; if(state.editing===p.id) state.editing=null; }
+    else armedDelete=p.id;
+  }
+  else return;
+  save(); render();
+});
+
+const h=location.hash;
+if(h==="#school") state.view="school";
+else if(h==="#date") state.view="date";
+else if(h==="#plans") state.view="plans";
+else if(h.startsWith("#plan-")){ state.open=h.slice(6); state.view="plan"; }
+render();
+</script>
+
+</body>
+</html>
